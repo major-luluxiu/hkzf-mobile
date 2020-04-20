@@ -5,6 +5,7 @@ import Nav1 from 'assets/images/nav-1.png'
 import Nav2 from 'assets/images/nav-2.png'
 import Nav3 from 'assets/images/nav-3.png'
 import Nav4 from 'assets/images/nav-4.png'
+import { getCurrentCity } from 'utils/city'
 
 // 样式导入
 import './index.scss'
@@ -53,35 +54,25 @@ class Index extends React.Component {
   }
 
   // dom挂载钩子
-  componentDidMount() {
+  async componentDidMount() {
     // 获取轮播图
     this.getCarousel()
 
     // 获取定位
-    var myCity = new window.BMap.LocalCity()
-    myCity.get(async (result) => {
-      const res = await axios.get('http://localhost:8080/area/info', {
-        params: {
-          name: result.name,
-        },
-      })
-      const { body, status } = res.data
-
-      if (status === 200) {
-        this.setState(
-          {
-            myCity: body,
-          },
-          () => {
-            // 获取到定位的地址后再获取小组信息和资讯
-            // 租房小组
-            this.getGroup()
-            // 最新资讯
-            this.getNews()
-          }
-        )
+    const city = await getCurrentCity()
+    console.log(city)
+    this.setState(
+      {
+        myCity: city,
+      },
+      () => {
+        // 获取到定位的地址后再获取小组信息和资讯
+        // 租房小组
+        this.getGroup()
+        // 最新资讯
+        this.getNews()
       }
-    })
+    )
   }
 
   // 获取轮播图
